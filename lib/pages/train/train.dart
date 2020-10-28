@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:lacucha_app_v2/constants.dart';
+
+import 'package:lacucha_app_v2/models/sesion.dart';
+import 'package:lacucha_app_v2/pages/train/components/bloque_card.dart';
+import 'package:lacucha_app_v2/services/train_service.dart';
 
 class TrainPage extends StatefulWidget {
   TrainPage({Key key, this.title}) : super(key: key);
@@ -10,12 +15,42 @@ class TrainPage extends StatefulWidget {
 }
 
 class _TrainPageState extends State<TrainPage> {
-  int _counter = 0;
+  Future<Sesion> futureSesion;
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
+  Widget trainContent(sesion) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Container(
+          color: secondaryColorDark,
+          child: Container(
+            padding: EdgeInsets.all(16.0),
+            child: Text(
+              "Sesión de hoy.",
+              style: Theme.of(context)
+                  .textTheme
+                  .headline6
+                  .apply(color: secondaryColorLight),
+            ),
+          ),
+        ),
+        Expanded(
+          child: ListView.builder(
+              padding: const EdgeInsets.all(8),
+              itemCount: sesion.bloques.length,
+              itemBuilder: (BuildContext context, int index) {
+                return BloqueCard(bloque: sesion.bloques[index]);
+              }),
+        ),
+      ],
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    futureSesion = TrainService.getSesion();
   }
 
   @override
@@ -25,19 +60,26 @@ class _TrainPageState extends State<TrainPage> {
         title: Text(widget.title),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'Train',
-            ),
-          ],
+        child: FutureBuilder<Sesion>(
+          future: futureSesion,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return trainContent(snapshot.data);
+            } else if (snapshot.hasError) {
+              return Text("${snapshot.error}");
+            }
+            return CircularProgressIndicator();
+          },
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
+        onPressed: () {},
+        tooltip: 'Empezar',
+        child: Icon(
+          Icons.play_arrow,
+          color: Colors.green[200],
+        ),
+        backgroundColor: Colors.green[600],
       ),
     );
   }

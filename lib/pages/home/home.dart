@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lacucha_app_v2/models/Sesion.dart';
-import 'package:lacucha_app_v2/models/Usuario.dart';
+import 'package:lacucha_app_v2/models/sesion.dart';
+import 'package:lacucha_app_v2/models/usuario.dart';
 
-import 'components/PerfilCard.dart';
-import 'components/SesionCard.dart';
+import 'components/perfil_card.dart';
+import 'components/sesion_card.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.title}) : super(key: key);
@@ -18,12 +18,19 @@ class _HomePageState extends State<HomePage> {
   int _counter = 0;
 
   static Usuario _usuario = Usuario(
-      nombre: "Tomas Suarez Lissi",
-      usuario: "@tsuarezlissi",
-      avatarUrl:
+      nombre: "Tomas",
+      apellido: "Suarez Lissi",
+      email: "tomas.sl@hotmail.com",
+      username: "@tsuarezlissi",
+      altura: 1.77,
+      peso: 67,
+      fechaNacimiento: new DateTime(1989, 8, 22),
+      genero: "M",
+      nivel: "Principiante",
+      imgUrl:
           "https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg");
 
-  static Sesion _sesion = Sesion(id: 1, fechaInicio: DateTime.now());
+  static Sesion _sesion = Sesion(idSesion: 1, fechaEmpezado: DateTime.now());
 
   void _incrementCounter() {
     setState(() {

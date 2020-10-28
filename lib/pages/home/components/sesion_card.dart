@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:lacucha_app_v2/models/Sesion.dart';
+import 'package:lacucha_app_v2/models/sesion.dart';
 
 class SesionCard extends StatelessWidget {
   const SesionCard({
@@ -27,7 +27,7 @@ class SesionCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
                     Text(
-                      "${DateFormat('dd/MM/yyyy').format(sesion.fechaInicio)}\nTodavía no entrenaste hoy.",
+                      "${DateFormat('dd/MM/yyyy').format(sesion.fechaEmpezado)}\nTodavía no entrenaste hoy.",
                       textAlign: TextAlign.center,
                     ),
                   ],
