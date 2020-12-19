@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:lacucha_app_v2/constants.dart';
-import 'package:lacucha_app_v2/main.dart';
 import 'package:lacucha_app_v2/models/usuario.dart';
 
 class PerfilCard extends StatelessWidget {
@@ -20,8 +19,8 @@ class PerfilCard extends StatelessWidget {
           children: <Widget>[
             Container(
               margin: EdgeInsets.all(8.0),
-              width: 100.0,
-              height: 100.0,
+              width: 120.0,
+              height: 120.0,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.lightBlue[100],
@@ -35,7 +34,10 @@ class PerfilCard extends StatelessWidget {
             ),
             Text(
               usuario.nombre,
-              style: Theme.of(context).textTheme.headline5,
+              style: Theme.of(context)
+                  .textTheme
+                  .headline5
+                  .apply(color: secondaryColor),
             ),
             Text(usuario.username),
             Container(

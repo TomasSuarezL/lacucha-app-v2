@@ -1,9 +1,17 @@
-import 'package:flutter/material.dart';
-import 'package:lacucha_app_v2/constants.dart';
+import 'dart:async';
 
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+
+import 'package:lacucha_app_v2/bloc/sesion/bloc.dart';
+import 'package:lacucha_app_v2/bloc/timer/bloc.dart';
+import 'package:lacucha_app_v2/bloc/usuario/bloc.dart';
+import 'package:lacucha_app_v2/constants.dart';
 import 'package:lacucha_app_v2/models/sesion.dart';
 import 'package:lacucha_app_v2/pages/train/components/bloque_card.dart';
-import 'package:lacucha_app_v2/services/train_service.dart';
+import 'package:lacucha_app_v2/pages/train/components/timer.dart';
 
 class TrainPage extends StatefulWidget {
   TrainPage({Key key, this.title}) : super(key: key);
@@ -17,21 +25,96 @@ class TrainPage extends StatefulWidget {
 class _TrainPageState extends State<TrainPage> {
   Future<Sesion> futureSesion;
 
-  Widget trainContent(sesion) {
+  SesionBloc _sesionBloc;
+  UsuarioBloc _usuarioBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _sesionBloc = BlocProvider.of<SesionBloc>(context);
+    _usuarioBloc = BlocProvider.of<UsuarioBloc>(context);
+  }
+
+  Widget _sesionPendiente(Sesion sesion) {
+    if (sesion.idSesion == null) {
+      return Center(child: Text("No hay ninguna sesión disponible"));
+    } else {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Ink(
+            color: secondaryColorDark,
+            child: Container(
+              child: Container(
+                padding: EdgeInsets.all(16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Sesión de hoy.",
+                      style: Theme.of(context).textTheme.headline6.apply(color: Colors.blueGrey[200]),
+                    ),
+                    SizedBox(
+                      height: 24,
+                      width: 24,
+                      child: IconButton(
+                        icon: Icon(Icons.edit),
+                        splashRadius: 24,
+                        padding: EdgeInsets.all(0.0),
+                        color: Colors.blueGrey[200],
+                        onPressed: () {},
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+                padding: const EdgeInsets.all(8),
+                itemCount: sesion.bloques.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return BloqueCard(bloque: sesion.bloques[index]);
+                }),
+          ),
+          Container(child: Timer())
+        ],
+      );
+    }
+  }
+
+  Widget _sesionFinalizada(Sesion sesion, int idUsuario) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Container(
-          color: secondaryColorDark,
+        Ink(
+          color: Colors.green[100],
           child: Container(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              "Sesión de hoy.",
-              style: Theme.of(context)
-                  .textTheme
-                  .headline6
-                  .apply(color: secondaryColorLight),
+            child: Container(
+              padding: EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Sesión de hoy finalizada.",
+                    style: Theme.of(context).textTheme.headline6.apply(color: Colors.green[600]),
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Text(
+                    "${DateFormat('dd/MM/yyyy hh:mm:ss').format(sesion.fechaEmpezado)}",
+                    style: Theme.of(context).textTheme.subtitle1.apply(color: Colors.green[600]),
+                  ),
+                  Text(
+                    "duracion: ${sesion.fechaFinalizado.difference(sesion.fechaEmpezado).inMinutes.toString()} mins.",
+                    style: Theme.of(context).textTheme.subtitle1.apply(color: Colors.green[600]),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -43,14 +126,49 @@ class _TrainPageState extends State<TrainPage> {
                 return BloqueCard(bloque: sesion.bloques[index]);
               }),
         ),
+        Container(
+          padding: EdgeInsets.all(8),
+          child: Center(
+            child: RaisedButton(
+              child: Text(
+                "Siguiente Sesion",
+                style: Theme.of(context).textTheme.button.apply(color: Colors.green[600]),
+              ),
+              color: Colors.green[100],
+              onPressed: () => _sesionBloc.add(SesionNext(idUsuario: idUsuario)),
+            ),
+          ),
+        )
       ],
     );
   }
 
-  @override
-  void initState() {
-    super.initState();
-    futureSesion = TrainService.getSesion();
+  Widget _sesionProxima(int idUsuario) {
+    return Container(
+      padding: EdgeInsets.all(16.0),
+      margin: EdgeInsets.all(8.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "Hoy no te toca entrenar, pero podés hacer la próxima.",
+            style: Theme.of(context).textTheme.subtitle1,
+          ),
+          SizedBox(
+            height: 30,
+          ),
+          RaisedButton(
+            child: Text(
+              "Próxima Sesión",
+              style: Theme.of(context).textTheme.headline6.apply(color: Colors.green[100]),
+            ),
+            padding: EdgeInsets.all(16.0),
+            color: Colors.green[600],
+            onPressed: () => _sesionBloc.add(SesionNext(idUsuario: idUsuario)),
+          )
+        ],
+      ),
+    );
   }
 
   @override
@@ -60,27 +178,80 @@ class _TrainPageState extends State<TrainPage> {
         title: Text(widget.title),
       ),
       body: Center(
-        child: FutureBuilder<Sesion>(
-          future: futureSesion,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return trainContent(snapshot.data);
-            } else if (snapshot.hasError) {
-              return Text("${snapshot.error}");
-            }
-            return CircularProgressIndicator();
+        child: BlocBuilder<UsuarioBloc, UsuarioState>(
+          builder: (usuarioContext, usuarioState) {
+            return BlocConsumer<SesionBloc, SesionState>(
+              listener: (context, state) {
+                // if (state is SesionFinal) {
+                //   // ACA escucho al finish de la sesion, deberia mandar un evento de sesion finalizada
+                //   Scaffold.of(context).showSnackBar(
+                //     SnackBar(
+                //       backgroundColor: Colors.green,
+                //       content: Text("Sesion Finished: ${state.sesion.fechaFinalizado.toString()}"),
+                //     ),
+                //   );
+                // } else if (state is SesionStart) {
+                //   Scaffold.of(context).showSnackBar(
+                //     SnackBar(
+                //       backgroundColor: Colors.green,
+                //       content: Text("Sesion Empezada: ${state.sesion.fechaEmpezado.toString()}"),
+                //     ),
+                //   );
+                // } else if (state is SesionInitial) {
+                //   Scaffold.of(context).showSnackBar(
+                //     SnackBar(
+                //       backgroundColor: Colors.green,
+                //       content: Text(state.toString()),
+                //     ),
+                //   );
+                // } else if (state is SesionProxima) {
+                //   Scaffold.of(context).showSnackBar(
+                //     SnackBar(
+                //       backgroundColor: Colors.green,
+                //       content: Text("Sin Sesion. Proxima."),
+                //     ),
+                //   );
+                // }
+              },
+              builder: (sesionContext, sesionState) {
+                if (usuarioState is UsuarioSuccess) {
+                  if (sesionState is SesionInitial) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (sesionState is SesionFailure) {
+                    return Center(child: Text("Error al obtener la próxima sesión."));
+                  } else if (sesionState is SesionSuccess || sesionState is SesionStart) {
+                    return _sesionPendiente(sesionState.sesion);
+                  } else if (sesionState is SesionFinal) {
+                    return _sesionFinalizada(sesionState.sesion, usuarioState.usuario.idUsuario);
+                  } else if (sesionState is SesionProxima) {
+                    return _sesionProxima(usuarioState.usuario.idUsuario);
+                  }
+                } else {
+                  return Container();
+                }
+              },
+            );
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        tooltip: 'Empezar',
-        child: Icon(
-          Icons.play_arrow,
-          color: Colors.green[200],
-        ),
-        backgroundColor: Colors.green[600],
-      ),
+      floatingActionButton: BlocBuilder<SesionBloc, SesionState>(builder: (sesionContext, sesionState) {
+        return BlocBuilder<TimerBloc, TimerState>(builder: (context, state) {
+          if (sesionState is SesionProxima) return Container();
+          if (state is TimerInitial) {
+            return FloatingActionButton(
+              onPressed: () {
+                // Add your onPressed code here!
+                BlocProvider.of<SesionBloc>(context).add(SesionStarted());
+                BlocProvider.of<TimerBloc>(context).add(TimerStarted(seconds: state.seconds));
+              },
+              child: Icon(Icons.play_arrow),
+              backgroundColor: Colors.green[600],
+            );
+          } else {
+            return Container();
+          }
+        });
+      }),
     );
   }
 }

@@ -1,30 +1,27 @@
 import 'dart:convert';
-
+import 'package:http/http.dart' as http;
 import 'package:lacucha_app_v2/constants.dart';
 import 'package:lacucha_app_v2/models/bloque.dart';
 import 'package:lacucha_app_v2/models/ejercicio.dart';
+import 'package:lacucha_app_v2/models/ejercicio_x_bloque.dart';
 import 'package:lacucha_app_v2/models/sesion.dart';
-import 'package:http/http.dart' as http;
 
 class TrainService {
-  static final Ejercicio _exampleEjercicio1 = Ejercicio(
-    idEjercicio: 1,
-    ejercicio: "Flexiones",
-    patron: "Tren Superior",
+  static final EjercicioXBloque _exampleEjercicio1 = EjercicioXBloque(
+    idEjerciciosxbloque: 1,
+    ejercicio: Ejercicio(idEjercicio: 1, nombre: "Flexiones", patron: "Tren Superior"),
     repeticiones: 10,
     carga: 10.0,
   );
-  static final Ejercicio _exampleEjercicio2 = Ejercicio(
-    idEjercicio: 2,
-    ejercicio: "Sentadillas",
-    patron: "Tren Inferior",
+  static final EjercicioXBloque _exampleEjercicio2 = EjercicioXBloque(
+    idEjerciciosxbloque: 2,
+    ejercicio: Ejercicio(idEjercicio: 2, nombre: "Sentadillas", patron: "Tren Inferior"),
     repeticiones: 8,
     carga: 20.0,
   );
-  static final Ejercicio _exampleEjercicio3 = Ejercicio(
-    idEjercicio: 3,
-    ejercicio: "Hollow Press",
-    patron: "Zona Media",
+  static final EjercicioXBloque _exampleEjercicio3 = EjercicioXBloque(
+    idEjerciciosxbloque: 3,
+    ejercicio: Ejercicio(idEjercicio: 3, nombre: "Hollow Press", patron: "Zona Media"),
     repeticiones: 15,
     carga: 0.0,
   );
@@ -54,12 +51,15 @@ class TrainService {
     return _exampleSession;
   }
 
-  static Future<Sesion> getSesion() async {
-    final response = await http.get('$apiBaseUrl/sesiones/todaySession');
+  static Future<bool> putSesion(Sesion sesion) async {
+    var _sesionJson = sesion.toJson();
+    String _sesionId = sesion.idSesion.toString();
+    final response =
+        await http.put('$apiBaseUrl/sesiones/$_sesionId', headers: {"content-type": "application/json"}, body: jsonEncode(_sesionJson));
     if (response.statusCode == 200) {
-      return Sesion.fromJson(jsonDecode(response.body));
+      return true;
     } else {
-      throw Exception('Error al obtener sesion del dia.');
+      return false;
     }
   }
 }

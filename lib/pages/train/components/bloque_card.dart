@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lacucha_app_v2/constants.dart';
 
-import 'package:lacucha_app_v2/models/ejercicio.dart';
+import 'package:lacucha_app_v2/models/ejercicio_x_bloque.dart';
 import 'package:lacucha_app_v2/models/bloque.dart';
 
 class BloqueCard extends StatelessWidget {
@@ -37,7 +37,7 @@ class BloqueCard extends StatelessWidget {
     );
   }
 
-  ejercicio(BuildContext context, {Ejercicio ejercicio}) {
+  ejercicio(BuildContext context, {EjercicioXBloque ejercicio}) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
       decoration: BoxDecoration(
@@ -51,13 +51,13 @@ class BloqueCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  ejercicio.ejercicio,
+                  ejercicio.ejercicio.nombre,
                   style: Theme.of(context)
                       .textTheme
                       .subtitle1
                       .apply(color: secondaryColorDark),
                 ),
-                Text(ejercicio.patron,
+                Text(ejercicio.ejercicio.patron,
                     style: Theme.of(context).textTheme.subtitle2)
               ],
             ),
@@ -80,11 +80,6 @@ class BloqueCard extends StatelessWidget {
       padding: EdgeInsets.all(8.0),
       child: Card(
         child: Container(
-          decoration: BoxDecoration(
-            border: Border(
-              left: BorderSide(color: secondaryColor, width: 8),
-            ),
-          ),
           child: Column(
             children: <Widget>[
               bloqueHeader(context,

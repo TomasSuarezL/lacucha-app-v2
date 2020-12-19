@@ -12,8 +12,9 @@ Bloque _$BloqueFromJson(Map<String, dynamic> json) {
     series: json['series'] as int,
     numBloque: json['numBloque'] as int,
     ejercicios: (json['ejercicios'] as List)
-        ?.map((e) =>
-            e == null ? null : Ejercicio.fromJson(e as Map<String, dynamic>))
+        ?.map((e) => e == null
+            ? null
+            : EjercicioXBloque.fromJson(e as Map<String, dynamic>))
         ?.toList(),
   );
 }

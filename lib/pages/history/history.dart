@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lacucha_app_v2/pages/history/components/mesociclo_card.dart';
 
 class HistoryPage extends StatefulWidget {
   HistoryPage({Key key, this.title}) : super(key: key);
@@ -26,19 +27,20 @@ class _HistoryPageState extends State<HistoryPage> {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Text(
-              'History',
-            ),
+            Expanded(
+              child: ListView.builder(
+                  padding: const EdgeInsets.all(8),
+                  itemCount: 1,
+                  itemBuilder: (BuildContext context, int index) {
+                    return MesocicloCard(mesociclo: null);
+                  }),
+            )
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lacucha_app_v2/pages/history.dart';
+import 'package:lacucha_app_v2/bloc/sesion/bloc/sesion_bloc.dart';
+import 'package:lacucha_app_v2/bloc/timer/bloc/timer_bloc.dart';
+import 'package:lacucha_app_v2/bloc/usuario/bloc/usuario_bloc.dart';
+import 'package:lacucha_app_v2/pages/history/history.dart';
 import 'package:lacucha_app_v2/pages/home/home.dart';
 import 'package:lacucha_app_v2/pages/settings.dart';
 import 'package:lacucha_app_v2/pages/train/train.dart';
+import 'package:lacucha_app_v2/services/ticker.dart';
 
 void main() {
   runApp(MyApp());
@@ -14,11 +19,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'La Cucha',
       theme: ThemeData(
         textTheme: GoogleFonts.oxygenTextTheme(
-          Theme.of(context).textTheme.apply(
-              bodyColor: Colors.grey[700], displayColor: Colors.grey[800]),
+          Theme.of(context).textTheme.apply(bodyColor: Colors.grey[700], displayColor: Colors.grey[800]),
         ),
         // This is the theme of your application.
         //
@@ -55,14 +60,18 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
 
-  static List<Widget> _widgetOptions = <Widget>[
-    HomePage(title: 'Perfil'),
-    TrainPage(title: 'Entrenar'),
-    HistoryPage(title: 'Historial'),
-    SettingsPage(title: 'Configuración'),
-  ];
+  Widget _getBottomNavTab(int index, Function changeTab) {
+    List<Widget> _widgetOptions = <Widget>[
+      HomePage(title: 'Perfil', changeIndex: _changeBottomNavTab),
+      TrainPage(title: 'Entrenar'),
+      HistoryPage(title: 'Historial'),
+      SettingsPage(title: 'Configuración'),
+    ];
 
-  void _onItemTapped(int index) {
+    return _widgetOptions.elementAt(index);
+  }
+
+  void _changeBottomNavTab(int index) {
     setState(() {
       _selectedIndex = index;
     });
@@ -71,8 +80,15 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
+      body: MultiBlocProvider(
+        providers: [
+          BlocProvider<TimerBloc>(create: (context) => TimerBloc(ticker: Ticker())),
+          BlocProvider<UsuarioBloc>(create: (context) => UsuarioBloc()),
+          BlocProvider<SesionBloc>(create: (context) => SesionBloc())
+        ],
+        child: Center(
+          child: _getBottomNavTab(_selectedIndex, _changeBottomNavTab),
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -96,7 +112,7 @@ class _MainPageState extends State<MainPage> {
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.grey[850],
         unselectedItemColor: Colors.grey[500],
-        onTap: _onItemTapped,
+        onTap: _changeBottomNavTab,
       ),
     );
   }

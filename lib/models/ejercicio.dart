@@ -5,17 +5,10 @@ part 'ejercicio.g.dart';
 @JsonSerializable()
 class Ejercicio {
   int idEjercicio;
-  int repeticiones;
-  double carga;
   String patron;
-  String ejercicio;
+  String nombre;
 
-  Ejercicio(
-      {this.idEjercicio,
-      this.repeticiones,
-      this.carga,
-      this.patron,
-      this.ejercicio});
+  Ejercicio({this.idEjercicio, this.patron, this.nombre});
 
   factory Ejercicio.fromJson(Map<String, dynamic> json) =>
       _$EjercicioFromJson(json);
