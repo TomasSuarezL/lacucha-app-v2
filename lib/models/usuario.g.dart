@@ -20,7 +20,9 @@ Usuario _$UsuarioFromJson(Map<String, dynamic> json) {
     genero: json['genero'] as String,
     altura: (json['altura'] as num)?.toDouble(),
     peso: (json['peso'] as num)?.toDouble(),
-    nivel: json['nivel'] as String,
+    nivel: json['nivel'] == null
+        ? null
+        : Nivel.fromJson(json['nivel'] as Map<String, dynamic>),
   );
 }
 

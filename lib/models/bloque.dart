@@ -15,4 +15,10 @@ class Bloque {
   factory Bloque.fromJson(Map<String, dynamic> json) => _$BloqueFromJson(json);
 
   Map<String, dynamic> toJson() => _$BloqueToJson(this);
+
+  Map<String, dynamic> toPostJson() => <String, dynamic>{
+        "series": this.series,
+        "numBloque": this.numBloque,
+        "ejercicios": this.ejercicios.map((e) => e.toPostJson()).toList()
+      };
 }

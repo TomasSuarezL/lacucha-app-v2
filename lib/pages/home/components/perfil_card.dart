@@ -27,17 +27,13 @@ class PerfilCard extends StatelessWidget {
                 image: DecorationImage(
                   image: NetworkImage(usuario.imgUrl),
                   fit: BoxFit.cover,
-                  colorFilter:
-                      ColorFilter.mode(Colors.lightBlue[300], BlendMode.darken),
+                  colorFilter: ColorFilter.mode(Colors.lightBlue[300], BlendMode.darken),
                 ),
               ),
             ),
             Text(
               usuario.nombre,
-              style: Theme.of(context)
-                  .textTheme
-                  .headline5
-                  .apply(color: secondaryColor),
+              style: Theme.of(context).textTheme.headline5.apply(color: secondaryColor),
             ),
             Text(usuario.username),
             Container(
@@ -63,14 +59,10 @@ class PerfilCard extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("Nivel",
-                            style: Theme.of(context).textTheme.subtitle2),
+                        Text("Nivel", style: Theme.of(context).textTheme.subtitle2),
                         Text(
-                          "${usuario.nivel}",
-                          style: Theme.of(context)
-                              .textTheme
-                              .subtitle1
-                              .apply(color: secondaryColorLight),
+                          "${usuario.nivel.descripcion}",
+                          style: Theme.of(context).textTheme.subtitle1.apply(color: secondaryColorLight),
                         )
                       ],
                     ),

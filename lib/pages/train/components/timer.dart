@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:lacucha_app_v2/bloc/sesion/bloc/sesion_bloc.dart';
+import 'package:lacucha_app_v2/bloc/mesociclo/bloc/mesociclo_bloc.dart';
 import 'package:lacucha_app_v2/bloc/timer/bloc.dart';
 import 'package:lacucha_app_v2/pages/train/components/timer_button.dart';
 
@@ -33,7 +33,7 @@ class Timer extends StatelessWidget {
           child: BlocConsumer<TimerBloc, TimerState>(
             listener: (context, state) {
               if (state is TimerFinish) {
-                BlocProvider.of<SesionBloc>(context).add(SesionFinished());
+                BlocProvider.of<MesocicloBloc>(context).add(SesionEnded());
               }
             },
             builder: (context, state) {

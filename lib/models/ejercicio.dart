@@ -10,8 +10,9 @@ class Ejercicio {
 
   Ejercicio({this.idEjercicio, this.patron, this.nombre});
 
-  factory Ejercicio.fromJson(Map<String, dynamic> json) =>
-      _$EjercicioFromJson(json);
+  factory Ejercicio.fromJson(Map<String, dynamic> json) => _$EjercicioFromJson(json);
 
   Map<String, dynamic> toJson() => _$EjercicioToJson(this);
+
+  Map<String, dynamic> toIdJson() => <String, dynamic>{"idEjercicio": this.idEjercicio};
 }

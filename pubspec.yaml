@@ -37,6 +37,7 @@ dependencies:
   bloc: ^6.1.0
   flutter_bloc: ^6.1.0
   equatable: ^1.2.5
+  flutter_cache_manager: ^2.1.0
 
 dev_dependencies:
   flutter_test:

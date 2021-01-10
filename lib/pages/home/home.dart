@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:lacucha_app_v2/bloc/sesion/bloc.dart';
+import 'package:lacucha_app_v2/bloc/mesociclo/bloc.dart';
 import 'package:lacucha_app_v2/bloc/usuario/bloc/usuario_bloc.dart';
-import 'package:lacucha_app_v2/models/sesion.dart';
 
 import 'components/perfil_card.dart';
 import 'components/sesion_card.dart';
@@ -59,7 +58,7 @@ class _HomeContent extends StatelessWidget {
       if (usuarioState is UsuarioInitial) {
         return Center(child: CircularProgressIndicator());
       } else if (usuarioState is UsuarioSuccess) {
-        BlocProvider.of<SesionBloc>(usuarioContext).add(SesionFetched(idUsuario: usuarioState.usuario.idUsuario));
+        BlocProvider.of<MesocicloBloc>(usuarioContext).add(MesocicloFetched(idUsuario: usuarioState.usuario.idUsuario));
         return ListView(
           children: <Widget>[PerfilCard(usuario: usuarioState.usuario), SesionCard()],
         );

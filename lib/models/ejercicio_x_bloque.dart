@@ -10,14 +10,12 @@ class EjercicioXBloque {
   double carga;
   Ejercicio ejercicio;
 
-  EjercicioXBloque(
-      {this.idEjerciciosxbloque,
-      this.repeticiones,
-      this.carga,
-      this.ejercicio});
+  EjercicioXBloque({this.idEjerciciosxbloque, this.repeticiones, this.carga, this.ejercicio});
 
-  factory EjercicioXBloque.fromJson(Map<String, dynamic> json) =>
-      _$EjercicioXBloqueFromJson(json);
+  factory EjercicioXBloque.fromJson(Map<String, dynamic> json) => _$EjercicioXBloqueFromJson(json);
 
   Map<String, dynamic> toJson() => _$EjercicioXBloqueToJson(this);
+
+  Map<String, dynamic> toPostJson() =>
+      <String, dynamic>{"repeticiones": this.repeticiones, "carga": this.carga, "ejercicio": this.ejercicio.toIdJson()};
 }

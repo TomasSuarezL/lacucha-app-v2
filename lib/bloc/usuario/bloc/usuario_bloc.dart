@@ -20,8 +20,7 @@ class UsuarioBloc extends Bloc<UsuarioEvent, UsuarioState> {
     if (event is UsuarioFetched) {
       try {
         if (currentState is UsuarioInitial) {
-          final usuario = await UsuarioService.getUsuario(
-              "tsuarezlissi"); //ToDo: HARDCODEO ACA EL USERNAME, CAMBIAR CUANDO IMPLEMENTE AUTH
+          final usuario = await UsuarioService.getUsuario("tsuarezlissi"); //ToDo: HARDCODEO ACA EL USERNAME, CAMBIAR CUANDO IMPLEMENTE AUTH
           yield UsuarioSuccess(usuario: usuario);
           return;
         }

@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:lacucha_app_v2/models/nivel.dart';
 
 part 'usuario.g.dart';
 
@@ -14,7 +15,7 @@ class Usuario {
   String genero;
   double altura;
   double peso;
-  String nivel;
+  Nivel nivel;
 
   Usuario(
       {this.idUsuario,
@@ -29,8 +30,9 @@ class Usuario {
       this.peso,
       this.nivel});
 
-  factory Usuario.fromJson(Map<String, dynamic> json) =>
-      _$UsuarioFromJson(json);
+  factory Usuario.fromJson(Map<String, dynamic> json) => _$UsuarioFromJson(json);
 
   Map<String, dynamic> toJson() => _$UsuarioToJson(this);
+
+  Map<String, dynamic> toIdJson() => <String, dynamic>{"idUsuario": this.idUsuario};
 }

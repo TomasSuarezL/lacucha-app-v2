@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
-import 'package:lacucha_app_v2/bloc/sesion/bloc.dart';
+import 'package:lacucha_app_v2/bloc/mesociclo/bloc.dart';
 import 'package:lacucha_app_v2/bloc/timer/bloc.dart';
 import 'package:lacucha_app_v2/bloc/usuario/bloc.dart';
 import 'package:lacucha_app_v2/constants.dart';
@@ -25,13 +25,13 @@ class TrainPage extends StatefulWidget {
 class _TrainPageState extends State<TrainPage> {
   Future<Sesion> futureSesion;
 
-  SesionBloc _sesionBloc;
+  MesocicloBloc _sesionBloc;
   UsuarioBloc _usuarioBloc;
 
   @override
   void initState() {
     super.initState();
-    _sesionBloc = BlocProvider.of<SesionBloc>(context);
+    _sesionBloc = BlocProvider.of<MesocicloBloc>(context);
     _usuarioBloc = BlocProvider.of<UsuarioBloc>(context);
   }
 
@@ -180,7 +180,7 @@ class _TrainPageState extends State<TrainPage> {
       body: Center(
         child: BlocBuilder<UsuarioBloc, UsuarioState>(
           builder: (usuarioContext, usuarioState) {
-            return BlocConsumer<SesionBloc, SesionState>(
+            return BlocConsumer<MesocicloBloc, MesocicloState>(
               listener: (context, state) {
                 // if (state is SesionFinal) {
                 //   // ACA escucho al finish de la sesion, deberia mandar un evento de sesion finalizada
@@ -215,16 +215,18 @@ class _TrainPageState extends State<TrainPage> {
               },
               builder: (sesionContext, sesionState) {
                 if (usuarioState is UsuarioSuccess) {
-                  if (sesionState is SesionInitial) {
+                  if (sesionState is MesocicloInitial) {
                     return Center(child: CircularProgressIndicator());
-                  } else if (sesionState is SesionFailure) {
+                  } else if (sesionState is MesocicloFailure) {
                     return Center(child: Text("Error al obtener la próxima sesión."));
-                  } else if (sesionState is SesionSuccess || sesionState is SesionStart) {
-                    return _sesionPendiente(sesionState.sesion);
-                  } else if (sesionState is SesionFinal) {
-                    return _sesionFinalizada(sesionState.sesion, usuarioState.usuario.idUsuario);
-                  } else if (sesionState is SesionProxima) {
+                  } else if (sesionState is MesocicloSuccess || sesionState is MesocicloSesionStart) {
+                    return _sesionPendiente(sesionState.sesionActual);
+                  } else if (sesionState is MesocicloSesionFinal) {
+                    return _sesionFinalizada(sesionState.sesionActual, usuarioState.usuario.idUsuario);
+                  } else if (sesionState is MesocicloSesionProxima) {
                     return _sesionProxima(usuarioState.usuario.idUsuario);
+                  } else if (sesionState is MesocicloEmpty) {
+                    return Center(child: Text("Sin Mesociclo."));
                   }
                 } else {
                   return Container();
@@ -234,14 +236,23 @@ class _TrainPageState extends State<TrainPage> {
           },
         ),
       ),
-      floatingActionButton: BlocBuilder<SesionBloc, SesionState>(builder: (sesionContext, sesionState) {
+      floatingActionButton: BlocBuilder<MesocicloBloc, MesocicloState>(builder: (sesionContext, sesionState) {
         return BlocBuilder<TimerBloc, TimerState>(builder: (context, state) {
-          if (sesionState is SesionProxima) return Container();
-          if (state is TimerInitial) {
+          if (sesionState is MesocicloSesionProxima)
+            return Container();
+          else if (sesionState is MesocicloEmpty) {
             return FloatingActionButton(
               onPressed: () {
                 // Add your onPressed code here!
-                BlocProvider.of<SesionBloc>(context).add(SesionStarted());
+              },
+              child: Icon(Icons.add),
+              backgroundColor: Colors.green[600],
+            );
+          } else if (state is TimerInitial) {
+            return FloatingActionButton(
+              onPressed: () {
+                // Add your onPressed code here!
+                BlocProvider.of<MesocicloBloc>(context).add(SesionStarted());
                 BlocProvider.of<TimerBloc>(context).add(TimerStarted(seconds: state.seconds));
               },
               child: Icon(Icons.play_arrow),

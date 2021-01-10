@@ -10,10 +10,14 @@ class Sesion {
   DateTime fechaFinalizado;
   List<Bloque> bloques;
 
-  Sesion(
-      {this.idSesion, this.fechaEmpezado, this.fechaFinalizado, this.bloques});
+  Sesion({this.idSesion, this.fechaEmpezado, this.fechaFinalizado, this.bloques});
 
   factory Sesion.fromJson(Map<String, dynamic> json) => _$SesionFromJson(json);
 
   Map<String, dynamic> toJson() => _$SesionToJson(this);
+
+  Map<String, dynamic> toPostJson() => <String, dynamic>{
+        "fechaEmpezado": this.fechaEmpezado.toIso8601String(),
+        "bloques": this.bloques.map((e) => e.toPostJson()).toList()
+      };
 }
