@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lacucha_app_v2/models/ejercicio.dart';
 import 'package:lacucha_app_v2/models/ejercicio_x_bloque.dart';
@@ -106,7 +107,8 @@ class _EjercicioEditorState extends State<EjercicioEditor> {
             color: Colors.white70,
           ),
           onTap: () async {
-            List<Ejercicio> _ejercicios = await TrainService.getEjerciciosPorPatron(_patron);
+            List<Ejercicio> _ejercicios = await TrainService.getEjerciciosPorPatron(
+                _patron, await FirebaseAuth.instance.currentUser.getIdToken());
 
             Navigator.push(
               context,

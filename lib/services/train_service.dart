@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:http/http.dart' as http;
 import 'package:lacucha_app_v2/constants.dart';
@@ -53,11 +54,12 @@ class TrainService {
     return _exampleSession;
   }
 
-  static Future<bool> putSesion(Sesion sesion) async {
+  static Future<bool> putSesion(Sesion sesion, String token) async {
     var _sesionJson = sesion.toJson();
     String _sesionId = sesion.idSesion.toString();
     final response = await http.put('$apiBaseUrl/sesiones/$_sesionId',
-        headers: {"content-type": "application/json"}, body: jsonEncode(_sesionJson));
+        headers: {HttpHeaders.contentTypeHeader: "application/json", HttpHeaders.authorizationHeader: "Bearer $token"},
+        body: jsonEncode(_sesionJson));
     if (response.statusCode == 200) {
       return true;
     } else {
@@ -65,7 +67,7 @@ class TrainService {
     }
   }
 
-  static Future<List<Ejercicio>> getEjerciciosPorPatron(String patron) async {
+  static Future<List<Ejercicio>> getEjerciciosPorPatron(String patron, String token) async {
     String _subPatrones;
     switch (patron) {
       case "Tren Superior":
@@ -81,7 +83,10 @@ class TrainService {
     }
 
     final String url = '$apiBaseUrl/ejercicios/?patrones=$_subPatrones';
-    final Map<String, String> headers = {"content-type": "application/json"};
+    final Map<String, String> headers = {
+      HttpHeaders.contentTypeHeader: "application/json",
+      HttpHeaders.authorizationHeader: "Bearer $token"
+    };
 
     try {
       var results = await DefaultCacheManager().getSingleFile(url, headers: headers);
@@ -97,11 +102,15 @@ class TrainService {
     }
   }
 
-  static Future<Mesociclo> postMesociclo(Mesociclo mesociclo) async {
+  static Future<Mesociclo> postMesociclo(Mesociclo mesociclo, String token) async {
     var _mesocicloJson = mesociclo.toPostJson();
     try {
       final response = await http.post('$apiBaseUrl/mesociclos/',
-          headers: {"content-type": "application/json"}, body: jsonEncode(_mesocicloJson));
+          headers: {
+            HttpHeaders.contentTypeHeader: "application/json",
+            HttpHeaders.authorizationHeader: "Bearer $token"
+          },
+          body: jsonEncode(_mesocicloJson));
       if (response.statusCode == 200) {
         Mesociclo _mesociclo = Mesociclo.fromJson(jsonDecode(response.body));
         return _mesociclo;

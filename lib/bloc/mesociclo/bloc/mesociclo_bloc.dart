@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lacucha_app_v2/models/mesociclo.dart';
 import 'package:lacucha_app_v2/models/sesion.dart';
 import 'package:lacucha_app_v2/services/train_service.dart';
@@ -34,12 +35,15 @@ class MesocicloBloc extends Bloc<MesocicloEvent, MesocicloState> {
   Stream<MesocicloState> _mapMesocicloFetchedToState(MesocicloFetched fetch) async* {
     try {
       if (state is MesocicloInitial) {
-        final mesociclo = await UsuarioService.getMesocicloActivo(fetch.idUsuario);
+        yield MesocicloFetching();
+        String _token = await FirebaseAuth.instance.currentUser.getIdToken();
+        final mesociclo = await UsuarioService.getMesocicloActivo(fetch.idUsuario, _token);
         if (mesociclo.idMesociclo == null) {
           yield MesocicloEmpty();
           return;
         }
-        Sesion sesionHoy = mesociclo.sesiones.firstWhere((s) => s.fechaEmpezado.difference(DateTime.now()).inDays == 0, orElse: () => null);
+        Sesion sesionHoy = mesociclo.sesiones
+            .firstWhere((s) => s.fechaEmpezado.difference(DateTime.now()).inDays == 0, orElse: () => null);
         if (sesionHoy == null) {
           yield MesocicloSesionProxima(mesociclo, sesionHoy);
         } else if (sesionHoy?.fechaFinalizado != null) {
@@ -57,9 +61,12 @@ class MesocicloBloc extends Bloc<MesocicloEvent, MesocicloState> {
   Stream<MesocicloState> _mapMesocicloCreatedToState(MesocicloCreated create) async* {
     try {
       if (state is MesocicloEmpty) {
-        Mesociclo _mesociclo = await TrainService.postMesociclo(create.mesociclo);
-        Sesion _sesionHoy =
-            _mesociclo.sesiones.firstWhere((s) => s.fechaEmpezado.difference(DateTime.now()).inDays == 0, orElse: () => null);
+        yield MesocicloFetching();
+
+        String _token = await FirebaseAuth.instance.currentUser.getIdToken();
+        Mesociclo _mesociclo = await TrainService.postMesociclo(create.mesociclo, _token);
+        Sesion _sesionHoy = _mesociclo.sesiones
+            .firstWhere((s) => s.fechaEmpezado.difference(DateTime.now()).inDays == 0, orElse: () => null);
 
         if (_sesionHoy == null) {
           yield MesocicloSesionProxima(_mesociclo, _sesionHoy);
@@ -88,8 +95,8 @@ class MesocicloBloc extends Bloc<MesocicloEvent, MesocicloState> {
     try {
       if (state is MesocicloSesionStart) {
         state.sesionActual.fechaFinalizado = DateTime.now();
-        // Put Sesion finalizada, finish.sesion
-        var result = await TrainService.putSesion(state.sesionActual);
+        String _token = await FirebaseAuth.instance.currentUser.getIdToken();
+        var result = await TrainService.putSesion(state.sesionActual, _token);
         if (result) {
           yield MesocicloSesionFinal(state.mesociclo, state.sesionActual);
         } else {

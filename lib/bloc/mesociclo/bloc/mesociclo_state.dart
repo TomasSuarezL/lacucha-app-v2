@@ -49,3 +49,5 @@ class MesocicloSesionFinal extends MesocicloState {
 }
 
 class MesocicloEmpty extends MesocicloState {}
+
+class MesocicloFetching extends MesocicloState {}

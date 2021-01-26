@@ -11,14 +11,6 @@ class HistoryPage extends StatefulWidget {
 }
 
 class _HistoryPageState extends State<HistoryPage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +27,7 @@ class _HistoryPageState extends State<HistoryPage> {
                   padding: const EdgeInsets.all(8),
                   itemCount: 1,
                   itemBuilder: (BuildContext context, int index) {
-                    return MesocicloCard(mesociclo: null);
+                    //return MesocicloCard(mesociclo: null);
                   }),
             )
           ],

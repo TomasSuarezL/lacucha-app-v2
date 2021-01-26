@@ -9,6 +9,7 @@ part of 'usuario.dart';
 Usuario _$UsuarioFromJson(Map<String, dynamic> json) {
   return Usuario(
     idUsuario: json['idUsuario'] as int,
+    uuid: json['uuid'] as String,
     nombre: json['nombre'] as String,
     apellido: json['apellido'] as String,
     email: json['email'] as String,
@@ -17,7 +18,9 @@ Usuario _$UsuarioFromJson(Map<String, dynamic> json) {
     fechaNacimiento: json['fechaNacimiento'] == null
         ? null
         : DateTime.parse(json['fechaNacimiento'] as String),
-    genero: json['genero'] as String,
+    genero: json['genero'] == null
+        ? null
+        : Genero.fromJson(json['genero'] as Map<String, dynamic>),
     altura: (json['altura'] as num)?.toDouble(),
     peso: (json['peso'] as num)?.toDouble(),
     nivel: json['nivel'] == null
@@ -28,6 +31,7 @@ Usuario _$UsuarioFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$UsuarioToJson(Usuario instance) => <String, dynamic>{
       'idUsuario': instance.idUsuario,
+      'uuid': instance.uuid,
       'nombre': instance.nombre,
       'apellido': instance.apellido,
       'email': instance.email,

@@ -9,9 +9,9 @@ import 'package:lacucha_app_v2/pages/nuevo_mesociclo/nuevo_editar_ejercicio.dart
 class NuevaSesionCard extends StatelessWidget {
   NuevaSesionCard({Key key, this.sesion, this.index, this.updateEjercicio}) : super(key: key);
 
-  Sesion sesion;
-  int index;
-  Function updateEjercicio;
+  final Sesion sesion;
+  final int index;
+  final Function updateEjercicio;
 
   @override
   Widget build(BuildContext context) {
@@ -110,11 +110,11 @@ class EjercicioXBloqueView extends StatelessWidget {
   EjercicioXBloqueView(
       {Key key, this.ejercicio, this.numEjercicio, this.numBloque, this.numSesion, this.updateEjercicio});
 
-  EjercicioXBloque ejercicio;
-  int numEjercicio;
-  int numBloque;
-  int numSesion;
-  Function updateEjercicio;
+  final EjercicioXBloque ejercicio;
+  final int numEjercicio;
+  final int numBloque;
+  final int numSesion;
+  final Function updateEjercicio;
 
   @override
   Widget build(BuildContext context) {

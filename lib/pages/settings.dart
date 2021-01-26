@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 class SettingsPage extends StatefulWidget {
   SettingsPage({Key key, this.title}) : super(key: key);
@@ -10,34 +11,50 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  int _counter = 0;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
+  Widget _emptyCacheSetting(BuildContext context) {
+    return InkWell(
+      child: Container(
+        padding: EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
+        ),
+        child: Text("Borrar Cache"),
+      ),
+      onTap: () async {
+        try {
+          await DefaultCacheManager().emptyCache();
+        } catch (e) {
+          _scaffoldKey.currentState
+              .showSnackBar(SnackBar(backgroundColor: Colors.red[200], content: Text("Error al borrar la cache")));
+        }
+
+        _scaffoldKey.currentState
+            .showSnackBar(SnackBar(backgroundColor: Colors.lightGreen[200], content: Text("Cache borrada")));
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text(widget.title),
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Text(
-              'Settings',
-            ),
+            Expanded(
+              child: ListView(
+                children: [_emptyCacheSetting(context)],
+              ),
+            )
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }

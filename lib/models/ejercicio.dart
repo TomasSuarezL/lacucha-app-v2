@@ -7,8 +7,9 @@ class Ejercicio {
   int idEjercicio;
   String patron;
   String nombre;
+  String urlVideo;
 
-  Ejercicio({this.idEjercicio, this.patron, this.nombre});
+  Ejercicio({this.idEjercicio, this.patron, this.nombre, this.urlVideo});
 
   factory Ejercicio.fromJson(Map<String, dynamic> json) => _$EjercicioFromJson(json);
 

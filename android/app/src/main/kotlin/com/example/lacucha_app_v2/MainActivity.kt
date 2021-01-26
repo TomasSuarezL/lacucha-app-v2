@@ -1,4 +1,4 @@
-package com.example.lacucha_app_v2
+package com.lacucha.app
 
 import io.flutter.embedding.android.FlutterActivity
 

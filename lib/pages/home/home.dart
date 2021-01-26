@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lacucha_app_v2/bloc/mesociclo/bloc.dart';
 import 'package:lacucha_app_v2/bloc/usuario/bloc/usuario_bloc.dart';
+import 'package:lacucha_app_v2/constants.dart';
 
 import 'components/perfil_card.dart';
 import 'components/sesion_card.dart';
@@ -23,7 +24,6 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _usuarioBloc = BlocProvider.of<UsuarioBloc>(context);
-    _usuarioBloc.add(UsuarioFetched());
   }
 
   @override
@@ -31,13 +31,31 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        actions: <Widget>[
+          FlatButton(
+            child: Text(
+              'Cerrar Sesión',
+              style: Theme.of(context).textTheme.button.apply(color: Colors.white70),
+            ),
+            onPressed: () {
+              _usuarioBloc.add(UsuarioLogOut());
+            },
+          ),
+        ],
       ),
-      body: Container(
-        padding: EdgeInsets.all(8.0),
-        margin: EdgeInsets.all(8.0),
-        child: Flexible(
-          child: _HomeContent(),
-        ),
+      body: Stack(
+        children: [
+          Container(
+            height: 250,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
+                  colors: [secondaryColorDark, secondaryColorLight]),
+            ),
+          ),
+          Container(padding: EdgeInsets.all(16.0), child: _HomeContent()),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => widget.changeIndex(1),
@@ -57,10 +75,10 @@ class _HomeContent extends StatelessWidget {
     return BlocBuilder<UsuarioBloc, UsuarioState>(builder: (usuarioContext, usuarioState) {
       if (usuarioState is UsuarioInitial) {
         return Center(child: CircularProgressIndicator());
-      } else if (usuarioState is UsuarioSuccess) {
+      } else if (usuarioState is UsuarioAuthenticated) {
         BlocProvider.of<MesocicloBloc>(usuarioContext).add(MesocicloFetched(idUsuario: usuarioState.usuario.idUsuario));
         return ListView(
-          children: <Widget>[PerfilCard(usuario: usuarioState.usuario), SesionCard()],
+          children: <Widget>[PerfilCard(usuario: usuarioState.usuario), HomeSesionCard()],
         );
       } else {
         return Center(child: Text("Error al recuperar el usuario."));

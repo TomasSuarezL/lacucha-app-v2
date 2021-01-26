@@ -11,6 +11,7 @@ Ejercicio _$EjercicioFromJson(Map<String, dynamic> json) {
     idEjercicio: json['idEjercicio'] as int,
     patron: json['patron'] as String,
     nombre: json['nombre'] as String,
+    urlVideo: json['urlVideo'] as String,
   );
 }
 
@@ -18,4 +19,5 @@ Map<String, dynamic> _$EjercicioToJson(Ejercicio instance) => <String, dynamic>{
       'idEjercicio': instance.idEjercicio,
       'patron': instance.patron,
       'nombre': instance.nombre,
+      'urlVideo': instance.urlVideo,
     };

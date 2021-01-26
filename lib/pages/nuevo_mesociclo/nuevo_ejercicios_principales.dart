@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lacucha_app_v2/models/ejercicio.dart';
 import 'package:lacucha_app_v2/models/mesociclo.dart';
@@ -78,7 +79,8 @@ class _NuevoEjerciciosPrincipalesState extends State<NuevoEjerciciosPrincipales>
                           color: Colors.white70,
                         ),
                         onTap: () async {
-                          List<Ejercicio> _ejercicios = await TrainService.getEjerciciosPorPatron("Tren Superior");
+                          List<Ejercicio> _ejercicios = await TrainService.getEjerciciosPorPatron(
+                              "Tren Superior", await FirebaseAuth.instance.currentUser.getIdToken());
 
                           Navigator.push(
                             context,
@@ -113,7 +115,8 @@ class _NuevoEjerciciosPrincipalesState extends State<NuevoEjerciciosPrincipales>
                           color: Colors.white70,
                         ),
                         onTap: () async {
-                          List<Ejercicio> _ejercicios = await TrainService.getEjerciciosPorPatron("Tren Inferior");
+                          List<Ejercicio> _ejercicios = await TrainService.getEjerciciosPorPatron(
+                              "Tren Inferior", await FirebaseAuth.instance.currentUser.getIdToken());
 
                           Navigator.push(
                             context,

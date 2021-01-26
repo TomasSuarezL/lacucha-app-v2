@@ -24,10 +24,10 @@ class _NuevoResumenState extends State<NuevoResumen> {
   void initState() {
     super.initState();
 
-    _calc_sesiones();
+    _calcSesiones();
   }
 
-  Future _calc_sesiones() async {
+  Future _calcSesiones() async {
     await widget.mesociclo.calc_sesiones(widget.patrones);
     setState(() {
       _nuevoMesociclo = widget.mesociclo;

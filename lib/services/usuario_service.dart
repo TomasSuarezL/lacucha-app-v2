@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 
 import 'package:lacucha_app_v2/constants.dart';
+import 'package:lacucha_app_v2/models/genero.dart';
 import 'package:lacucha_app_v2/models/mesociclo.dart';
 import 'package:lacucha_app_v2/models/nivel.dart';
 import 'package:lacucha_app_v2/models/sesion.dart';
@@ -16,7 +18,7 @@ class UsuarioService {
       altura: 1.70,
       peso: 99,
       fechaNacimiento: new DateTime(1989, 8, 22),
-      genero: "M",
+      genero: Genero.masculino,
       nivel: Nivel.principiante,
       imgUrl: "assets/Perro.jpeg");
 
@@ -24,8 +26,9 @@ class UsuarioService {
     return _usuario;
   }
 
-  static Future<Usuario> getUsuario(String username) async {
-    final response = await http.get('$apiBaseUrl/usuarios/$username');
+  static Future<Usuario> getUsuario(String uuid, String token) async {
+    final response =
+        await http.get('$apiBaseUrl/usuarios/$uuid', headers: {HttpHeaders.authorizationHeader: "Bearer $token"});
     if (response.statusCode == 200) {
       return Usuario.fromJson(jsonDecode(response.body));
     } else {
@@ -33,8 +36,21 @@ class UsuarioService {
     }
   }
 
-  static Future<Mesociclo> getMesocicloActivo(int idUsuario) async {
-    final response = await http.get('$apiBaseUrl/usuarios/$idUsuario/mesociclos?activo=true');
+  static Future<Usuario> postUsuario(Usuario usuario, String token) async {
+    var _usuarioJson = usuario.toPostJson();
+    final response = await http.post('$apiBaseUrl/usuarios/',
+        headers: {HttpHeaders.contentTypeHeader: "application/json", HttpHeaders.authorizationHeader: "Bearer $token"},
+        body: jsonEncode(_usuarioJson));
+    if (response.statusCode == 200) {
+      return Usuario.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception(jsonDecode(response.body));
+    }
+  }
+
+  static Future<Mesociclo> getMesocicloActivo(int idUsuario, String token) async {
+    final response = await http.get('$apiBaseUrl/usuarios/$idUsuario/mesociclos?activo=true',
+        headers: {HttpHeaders.authorizationHeader: "Bearer $token"});
     if (response.statusCode == 200) {
       return Mesociclo.fromJson(jsonDecode(response.body)[0]);
     } else {
@@ -42,8 +58,9 @@ class UsuarioService {
     }
   }
 
-  static Future<Sesion> getSesionDeHoy(int idUsuario) async {
-    final response = await http.get('$apiBaseUrl/usuarios/$idUsuario/mesociclos/sesionHoy');
+  static Future<Sesion> getSesionDeHoy(int idUsuario, String token) async {
+    final response = await http.get('$apiBaseUrl/usuarios/$idUsuario/mesociclos/sesionHoy',
+        headers: {HttpHeaders.authorizationHeader: "Bearer $token"});
     if (response.statusCode == 200) {
       return Sesion.fromJson(jsonDecode(response.body));
     } else {
@@ -51,8 +68,9 @@ class UsuarioService {
     }
   }
 
-  static Future<Sesion> getProximaSesion(int idUsuario) async {
-    final response = await http.get('$apiBaseUrl/usuarios/$idUsuario/mesociclos/proximaSesion');
+  static Future<Sesion> getProximaSesion(int idUsuario, String token) async {
+    final response = await http.get('$apiBaseUrl/usuarios/$idUsuario/mesociclos/proximaSesion',
+        headers: {HttpHeaders.authorizationHeader: "Bearer $token"});
     if (response.statusCode == 200) {
       return Sesion.fromJson(jsonDecode(response.body));
     } else {

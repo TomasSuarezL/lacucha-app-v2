@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import 'package:lacucha_app_v2/bloc/mesociclo/bloc.dart';
@@ -10,6 +9,7 @@ import 'package:lacucha_app_v2/bloc/timer/bloc.dart';
 import 'package:lacucha_app_v2/bloc/usuario/bloc.dart';
 import 'package:lacucha_app_v2/constants.dart';
 import 'package:lacucha_app_v2/models/sesion.dart';
+import 'package:lacucha_app_v2/pages/nuevo_mesociclo/nuevo_mesociclo.dart';
 import 'package:lacucha_app_v2/pages/train/components/bloque_card.dart';
 import 'package:lacucha_app_v2/pages/train/components/timer.dart';
 
@@ -181,40 +181,9 @@ class _TrainPageState extends State<TrainPage> {
         child: BlocBuilder<UsuarioBloc, UsuarioState>(
           builder: (usuarioContext, usuarioState) {
             return BlocConsumer<MesocicloBloc, MesocicloState>(
-              listener: (context, state) {
-                // if (state is SesionFinal) {
-                //   // ACA escucho al finish de la sesion, deberia mandar un evento de sesion finalizada
-                //   Scaffold.of(context).showSnackBar(
-                //     SnackBar(
-                //       backgroundColor: Colors.green,
-                //       content: Text("Sesion Finished: ${state.sesion.fechaFinalizado.toString()}"),
-                //     ),
-                //   );
-                // } else if (state is SesionStart) {
-                //   Scaffold.of(context).showSnackBar(
-                //     SnackBar(
-                //       backgroundColor: Colors.green,
-                //       content: Text("Sesion Empezada: ${state.sesion.fechaEmpezado.toString()}"),
-                //     ),
-                //   );
-                // } else if (state is SesionInitial) {
-                //   Scaffold.of(context).showSnackBar(
-                //     SnackBar(
-                //       backgroundColor: Colors.green,
-                //       content: Text(state.toString()),
-                //     ),
-                //   );
-                // } else if (state is SesionProxima) {
-                //   Scaffold.of(context).showSnackBar(
-                //     SnackBar(
-                //       backgroundColor: Colors.green,
-                //       content: Text("Sin Sesion. Proxima."),
-                //     ),
-                //   );
-                // }
-              },
+              listener: (context, state) {},
               builder: (sesionContext, sesionState) {
-                if (usuarioState is UsuarioSuccess) {
+                if (usuarioState is UsuarioAuthenticated) {
                   if (sesionState is MesocicloInitial) {
                     return Center(child: CircularProgressIndicator());
                   } else if (sesionState is MesocicloFailure) {
@@ -228,9 +197,8 @@ class _TrainPageState extends State<TrainPage> {
                   } else if (sesionState is MesocicloEmpty) {
                     return Center(child: Text("Sin Mesociclo."));
                   }
-                } else {
-                  return Container();
                 }
+                return Container();
               },
             );
           },
@@ -243,7 +211,12 @@ class _TrainPageState extends State<TrainPage> {
           else if (sesionState is MesocicloEmpty) {
             return FloatingActionButton(
               onPressed: () {
-                // Add your onPressed code here!
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          NuevoMesociclo(usuario: ((_usuarioBloc.state) as UsuarioAuthenticated).usuario)),
+                );
               },
               child: Icon(Icons.add),
               backgroundColor: Colors.green[600],

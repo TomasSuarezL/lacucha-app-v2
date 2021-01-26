@@ -7,13 +7,15 @@ import 'package:lacucha_app_v2/constants.dart';
 import 'package:lacucha_app_v2/models/usuario.dart';
 import 'package:lacucha_app_v2/pages/nuevo_mesociclo/nuevo_mesociclo.dart';
 
-class SesionCard extends StatelessWidget {
-  const SesionCard({Key key}) : super(key: key);
+class HomeSesionCard extends StatelessWidget {
+  const HomeSesionCard({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    Usuario _usuario = (BlocProvider.of<UsuarioBloc>(context).state as UsuarioSuccess).usuario;
+    Usuario _usuario = (BlocProvider.of<UsuarioBloc>(context).state as UsuarioAuthenticated).usuario;
     return Card(
+      elevation: 8.0,
+      margin: EdgeInsets.all(0.0),
       child: Container(
         padding: EdgeInsets.all(24.0),
         child: Column(
@@ -25,7 +27,11 @@ class SesionCard extends StatelessWidget {
             Container(
               margin: EdgeInsets.all(16.0),
               child: BlocBuilder<MesocicloBloc, MesocicloState>(builder: (context, state) {
-                if (state is MesocicloSuccess) {
+                if (state is MesocicloInitial || state is MesocicloFetching) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (state is MesocicloSuccess) {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[

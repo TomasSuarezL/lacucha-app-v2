@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1096899864851",
+    "project_id": "lacucha-c4139",
+    "storage_bucket": "lacucha-c4139.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1096899864851:android:dfa3558ca9bed2419592e6",
+        "android_client_info": {
+          "package_name": "com.lacucha.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1096899864851-nh6upu1mes5qk4a2lvt5betfh1nhanvi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lacucha.app",
+            "certificate_hash": "4c1eb21f983e36017c08483914a34daea1ef68b8"
+          }
+        },
+        {
+          "client_id": "1096899864851-h3dnck612ppj5shqelelvr6vfadqn0cp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBoDWFd97ZP2tdUG5Vc7YRZlmW3mY4ynfg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1096899864851-h3dnck612ppj5shqelelvr6vfadqn0cp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

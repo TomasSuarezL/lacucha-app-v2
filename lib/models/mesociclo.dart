@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:lacucha_app_v2/models/bloque.dart';
 import 'package:lacucha_app_v2/models/ejercicio_x_bloque.dart';
@@ -52,9 +53,11 @@ class Mesociclo {
     this.sesiones = [];
 
     // Aca pasa la magia. Calculo en base a los datos ingresados del nuevo mesociclo, como deberian ser las proximas sesiones
-    List<Ejercicio> _ejerciciosTrenSuperior = await TrainService.getEjerciciosPorPatron("Tren Superior");
-    List<Ejercicio> _ejerciciosTrenInferior = await TrainService.getEjerciciosPorPatron("Tren Inferior");
-    List<Ejercicio> _ejerciciosCore = await TrainService.getEjerciciosPorPatron("Core");
+    String _token = await FirebaseAuth.instance.currentUser.getIdToken();
+
+    List<Ejercicio> _ejerciciosTrenSuperior = await TrainService.getEjerciciosPorPatron("Tren Superior", _token);
+    List<Ejercicio> _ejerciciosTrenInferior = await TrainService.getEjerciciosPorPatron("Tren Inferior", _token);
+    List<Ejercicio> _ejerciciosCore = await TrainService.getEjerciciosPorPatron("Core", _token);
 
     List<int> _indexesTrenSuperior = List.generate(_ejerciciosTrenSuperior.length, (index) => index)..shuffle();
     List<int> _indexesTrenInferior = List.generate(_ejerciciosTrenInferior.length, (index) => index)..shuffle();
