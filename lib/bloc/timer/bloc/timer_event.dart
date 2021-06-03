@@ -23,6 +23,8 @@ class TimerResumed extends TimerEvent {}
 
 class TimerEnded extends TimerEvent {}
 
+class TimerRestart extends TimerEvent {}
+
 class TimerTicked extends TimerEvent {
   final int seconds;
 

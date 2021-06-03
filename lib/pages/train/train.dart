@@ -55,17 +55,6 @@ class _TrainPageState extends State<TrainPage> {
                       "Sesión de hoy.",
                       style: Theme.of(context).textTheme.headline6.apply(color: Colors.blueGrey[200]),
                     ),
-                    SizedBox(
-                      height: 24,
-                      width: 24,
-                      child: IconButton(
-                        icon: Icon(Icons.edit),
-                        splashRadius: 24,
-                        padding: EdgeInsets.all(0.0),
-                        color: Colors.blueGrey[200],
-                        onPressed: () {},
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -123,7 +112,7 @@ class _TrainPageState extends State<TrainPage> {
               padding: const EdgeInsets.all(8),
               itemCount: sesion.bloques.length,
               itemBuilder: (BuildContext context, int index) {
-                return BloqueCard(bloque: sesion.bloques[index]);
+                return BloqueCard(bloque: sesion.bloques[index], sesionFinalizada: true);
               }),
         ),
         Container(
@@ -195,7 +184,7 @@ class _TrainPageState extends State<TrainPage> {
                   } else if (sesionState is MesocicloSesionProxima) {
                     return _sesionProxima(usuarioState.usuario.idUsuario);
                   } else if (sesionState is MesocicloEmpty) {
-                    return Center(child: Text("Sin Mesociclo."));
+                    return Center(child: Text("No hay Mesociclos Activos."));
                   }
                 }
                 return Container();
@@ -221,10 +210,9 @@ class _TrainPageState extends State<TrainPage> {
               child: Icon(Icons.add),
               backgroundColor: Colors.green[600],
             );
-          } else if (state is TimerInitial) {
+          } else if (state is TimerInitial && sesionState is MesocicloSuccess) {
             return FloatingActionButton(
               onPressed: () {
-                // Add your onPressed code here!
                 BlocProvider.of<MesocicloBloc>(context).add(SesionStarted());
                 BlocProvider.of<TimerBloc>(context).add(TimerStarted(seconds: state.seconds));
               },

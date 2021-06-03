@@ -48,6 +48,18 @@ class UsuarioService {
     }
   }
 
+  static Future<Usuario> putUsuario(Usuario usuario, String token) async {
+    var _usuarioJson = usuario.toPutJson();
+    final response = await http.put('$apiBaseUrl/usuarios/${usuario.uuid}',
+        headers: {HttpHeaders.contentTypeHeader: "application/json", HttpHeaders.authorizationHeader: "Bearer $token"},
+        body: jsonEncode(_usuarioJson));
+    if (response.statusCode == 200) {
+      return Usuario.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception(jsonDecode(response.body));
+    }
+  }
+
   static Future<Mesociclo> getMesocicloActivo(int idUsuario, String token) async {
     final response = await http.get('$apiBaseUrl/usuarios/$idUsuario/mesociclos?activo=true',
         headers: {HttpHeaders.authorizationHeader: "Bearer $token"});

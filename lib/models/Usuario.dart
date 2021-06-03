@@ -52,4 +52,19 @@ class Usuario {
         'altura': this.altura,
         'nivel': this.nivel.toIdJson(),
       };
+
+  Map<String, dynamic> toPutJson() => <String, dynamic>{
+        'idUsuario': this.idUsuario,
+        'uuid': this.uuid,
+        'nombre': this.nombre,
+        'apellido': this.apellido,
+        'email': this.email,
+        'username': this.username,
+        'imgUrl': this.imgUrl,
+        'fechaNacimiento': this.fechaNacimiento?.toIso8601String(),
+        'genero': this.genero.toIdJson(),
+        'peso': this.peso,
+        'altura': this.altura,
+        'nivel': this.nivel.toIdJson(),
+      };
 }

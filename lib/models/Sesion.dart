@@ -20,4 +20,11 @@ class Sesion {
         "fechaEmpezado": this.fechaEmpezado.toIso8601String(),
         "bloques": this.bloques.map((e) => e.toPostJson()).toList()
       };
+
+  Map<String, dynamic> toPutJson() => <String, dynamic>{
+        'idSesion': this.idSesion,
+        "fechaEmpezado": this.fechaEmpezado.toIso8601String(),
+        "fechaFinalizado": this.fechaEmpezado.toIso8601String(),
+        "bloques": this.bloques.map((e) => e.toJson()).toList()
+      };
 }

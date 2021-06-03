@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lacucha_app_v2/models/mesociclo.dart';
 import 'package:lacucha_app_v2/models/organizacion.dart';
+import 'package:lacucha_app_v2/pages/components/button_success.dart';
 import 'package:lacucha_app_v2/pages/nuevo_mesociclo/nuevo_ejercicios_principales.dart';
 
 class NuevoOrganizacion extends StatefulWidget {
@@ -27,18 +28,8 @@ class _NuevoOrganizacionState extends State<NuevoOrganizacion> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        RaisedButton(
-          child: Row(
-            children: [
-              Text(
-                "Siguiente",
-                style: Theme.of(context).textTheme.subtitle1,
-              ),
-              Icon(Icons.arrow_right)
-            ],
-          ),
-          padding: EdgeInsets.all(16),
-          color: Colors.green[200],
+        ButtonSuccess(
+          text: "Siguiente",
           onPressed: () {
             if (_organizacion == null) {
               _scaffoldKey.currentState.showSnackBar(
@@ -102,7 +93,9 @@ class _NuevoOrganizacionState extends State<NuevoOrganizacion> {
                           padding: EdgeInsets.all(32),
                           decoration: BoxDecoration(
                             border: Border(top: BorderSide(color: Theme.of(context).dividerColor)),
-                            color: _organizacion == Organizacion.tren_superior_inferior ? Colors.lightBlue[50] : Colors.white70,
+                            color: _organizacion == Organizacion.tren_superior_inferior
+                                ? Colors.lightBlue[50]
+                                : Colors.white70,
                           ),
                           child: Text(
                             "Tren Superior / Tren Inferior",

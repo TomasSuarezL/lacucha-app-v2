@@ -4,8 +4,8 @@ import 'package:lacucha_app_v2/bloc/mesociclo/bloc.dart';
 import 'package:lacucha_app_v2/bloc/usuario/bloc/usuario_bloc.dart';
 import 'package:lacucha_app_v2/constants.dart';
 
-import 'components/perfil_card.dart';
-import 'components/sesion_card.dart';
+import 'components/home_perfil_card.dart';
+import 'components/home_mesociclo_card.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.title, this.changeIndex}) : super(key: key);
@@ -49,12 +49,15 @@ class _HomePageState extends State<HomePage> {
             height: 250,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                  begin: Alignment.topRight,
-                  end: Alignment.bottomLeft,
-                  colors: [secondaryColorDark, secondaryColorLight]),
+                  begin: Alignment.topRight, end: Alignment.bottomLeft, colors: [secondaryColor, secondaryColorLight]),
+              image: DecorationImage(
+                image: AssetImage("assets/la_cucha_background.jpg"),
+                fit: BoxFit.cover,
+                colorFilter: ColorFilter.mode(secondaryColor.withOpacity(0.6), BlendMode.dstOut),
+              ),
             ),
           ),
-          Container(padding: EdgeInsets.all(16.0), child: _HomeContent()),
+          _HomeContent(),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -64,6 +67,12 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.green[600],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _usuarioBloc.close();
+    super.dispose();
   }
 }
 
@@ -76,9 +85,11 @@ class _HomeContent extends StatelessWidget {
       if (usuarioState is UsuarioInitial) {
         return Center(child: CircularProgressIndicator());
       } else if (usuarioState is UsuarioAuthenticated) {
-        BlocProvider.of<MesocicloBloc>(usuarioContext).add(MesocicloFetched(idUsuario: usuarioState.usuario.idUsuario));
+        MesocicloBloc _mesocicloBloc = BlocProvider.of<MesocicloBloc>(usuarioContext);
+        if (_mesocicloBloc.state is MesocicloInitial)
+          _mesocicloBloc.add(MesocicloFetched(idUsuario: usuarioState.usuario.idUsuario));
         return ListView(
-          children: <Widget>[PerfilCard(usuario: usuarioState.usuario), HomeSesionCard()],
+          children: <Widget>[PerfilCard(usuario: usuarioState.usuario), HomeMesocicloCard()],
         );
       } else {
         return Center(child: Text("Error al recuperar el usuario."));

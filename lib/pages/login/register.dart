@@ -51,6 +51,32 @@ class _RegisterPageState extends State<RegisterPage> {
     super.initState();
   }
 
+  Future<bool> _onBackPressed() {
+    return showDialog(
+          context: context,
+          builder: (context) => new AlertDialog(
+            title: new Text('Cancelar Registro?'),
+            content: new Text('Se van a perder los datos ingresados'),
+            actions: <Widget>[
+              new RaisedButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                color: Colors.red[200],
+                child: Text("No"),
+              ),
+              new RaisedButton(
+                onPressed: () {
+                  _usuarioBloc.add(UsuarioLogOut());
+                  Navigator.of(context).pop(true);
+                },
+                color: Colors.lightGreen[200],
+                child: Text("Yes"),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+  }
+
   Widget _loginHeader(BuildContext context) {
     return Container(
       child: Column(
@@ -123,7 +149,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   fillColor: Theme.of(context).primaryColorLight.withOpacity(0.2),
                   labelText: "Peso",
                   suffix: Text("Kg.")),
-              initialValue: _peso.toString(),
+              initialValue: "",
               onChanged: (value) => setState(() => _peso = double.tryParse(value)),
               validator: (value) {
                 if (double.tryParse(value) == 0) {
@@ -147,7 +173,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   fillColor: Theme.of(context).primaryColorLight.withOpacity(0.2),
                   labelText: "Altura",
                   suffix: Text("m.")),
-              initialValue: _altura.toString(),
+              initialValue: "",
               onChanged: (value) => setState(() => _altura = double.tryParse(value)),
               validator: (value) {
                 if (double.tryParse(value) == 0) {
@@ -244,101 +270,105 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        title: Text("Log In"),
-        actions: <Widget>[
-          FlatButton(
-            child: Text(
-              'Cerrar Sesión',
-              style: Theme.of(context).textTheme.button.apply(color: Colors.white70),
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        key: _scaffoldKey,
+        appBar: AppBar(
+          title: Text("Log In"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text(
+                'Cerrar Sesión',
+                style: Theme.of(context).textTheme.button.apply(color: Colors.white70),
+              ),
+              onPressed: () {
+                _usuarioBloc.add(UsuarioLogOut());
+              },
             ),
-            onPressed: () {
-              _usuarioBloc.add(UsuarioLogOut());
-            },
-          ),
-        ],
-      ),
-      body: Container(
-        padding: EdgeInsets.all(0.0),
-        color: Theme.of(context).primaryColorDark,
-        child: _loading
-            ? Center(child: CircularProgressIndicator())
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  _loginHeader(context),
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).cardColor,
-                        borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
-                        boxShadow: [
-                          BoxShadow(offset: Offset(0, 0), blurRadius: 0.0, color: Theme.of(context).primaryColorLight),
-                        ],
-                      ),
-                      margin: EdgeInsets.only(top: 0.0),
-                      padding: EdgeInsets.all(24.0),
-                      child: Form(
-                        key: _formKey,
-                        child: ListView(
-                          children: [
-                            Container(
-                              margin: EdgeInsets.all(0.0),
-                              width: 120.0,
-                              height: 120.0,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.lightBlue[100],
-                                image: DecorationImage(
-                                  image: NetworkImage(_currentUser.photoURL ??
-                                      "https://i0.wp.com/www.repol.copl.ulaval.ca/wp-content/uploads/2019/01/default-user-icon.jpg?fit=300%2C300"),
-                                  fit: BoxFit.fitHeight,
-                                  colorFilter: ColorFilter.mode(Colors.lightBlue[100], BlendMode.darken),
+          ],
+        ),
+        body: Container(
+          padding: EdgeInsets.all(0.0),
+          color: secondaryColorDark,
+          child: _loading
+              ? Center(child: CircularProgressIndicator())
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    _loginHeader(context),
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).cardColor,
+                          borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+                          boxShadow: [
+                            BoxShadow(
+                                offset: Offset(0, 0), blurRadius: 0.0, color: Theme.of(context).primaryColorLight),
+                          ],
+                        ),
+                        margin: EdgeInsets.only(top: 0.0),
+                        padding: EdgeInsets.all(24.0),
+                        child: Form(
+                          key: _formKey,
+                          child: ListView(
+                            children: [
+                              Container(
+                                margin: EdgeInsets.all(0.0),
+                                width: 120.0,
+                                height: 120.0,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.lightBlue[100],
+                                  image: DecorationImage(
+                                    image: NetworkImage(_currentUser.photoURL ??
+                                        "https://i0.wp.com/www.repol.copl.ulaval.ca/wp-content/uploads/2019/01/default-user-icon.jpg?fit=300%2C300"),
+                                    fit: BoxFit.fitHeight,
+                                    colorFilter: ColorFilter.mode(Colors.lightBlue[100], BlendMode.darken),
+                                  ),
                                 ),
                               ),
-                            ),
-                            Container(
-                                margin: EdgeInsets.symmetric(vertical: 8.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text("${_currentUser.email}", style: Theme.of(context).textTheme.subtitle1),
-                                  ],
-                                )),
-                            SizedBox(
-                              height: 24.0,
-                            ),
-                            _textInput(context, _username, "Username", (value) => () => _username = value),
-                            SizedBox(
-                              height: 16.0,
-                            ),
-                            _textInput(context, _nombre, "Nombre", (value) => () => _nombre = value),
-                            SizedBox(
-                              height: 16.0,
-                            ),
-                            _textInput(context, _apellido, "Apellido", (value) => () => _apellido = value),
-                            SizedBox(
-                              height: 16.0,
-                            ),
-                            _generoInput(context),
-                            SizedBox(
-                              height: 16.0,
-                            ),
-                            _fechaInput(context),
-                            SizedBox(
-                              height: 16.0,
-                            ),
-                            _alturaYPesoInput(context),
-                            Container(margin: EdgeInsets.only(top: 24.0), child: _guardarButton(context)),
-                          ],
+                              Container(
+                                  margin: EdgeInsets.symmetric(vertical: 8.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text("${_currentUser.email}", style: Theme.of(context).textTheme.subtitle1),
+                                    ],
+                                  )),
+                              SizedBox(
+                                height: 24.0,
+                              ),
+                              _textInput(context, _username, "Username", (value) => () => _username = value),
+                              SizedBox(
+                                height: 16.0,
+                              ),
+                              _textInput(context, _nombre, "Nombre", (value) => () => _nombre = value),
+                              SizedBox(
+                                height: 16.0,
+                              ),
+                              _textInput(context, _apellido, "Apellido", (value) => () => _apellido = value),
+                              SizedBox(
+                                height: 16.0,
+                              ),
+                              _generoInput(context),
+                              SizedBox(
+                                height: 16.0,
+                              ),
+                              _fechaInput(context),
+                              SizedBox(
+                                height: 16.0,
+                              ),
+                              _alturaYPesoInput(context),
+                              Container(margin: EdgeInsets.only(top: 24.0), child: _guardarButton(context)),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+        ),
       ),
     );
   }

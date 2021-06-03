@@ -58,7 +58,11 @@ class _EjercicioEditorState extends State<EjercicioEditor> {
       ButtonSuccess(
         text: "Guardar",
         onPressed: () {
-          widget.setEjercicio(EjercicioXBloque(carga: _carga, repeticiones: _reps, ejercicio: _ejercicio));
+          widget.setEjercicio(EjercicioXBloque(
+              idEjerciciosxbloque: widget.ejercicio.idEjerciciosxbloque,
+              carga: _carga,
+              repeticiones: _reps,
+              ejercicio: _ejercicio));
           Navigator.pop(context);
         },
       ),

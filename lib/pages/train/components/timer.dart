@@ -34,6 +34,7 @@ class Timer extends StatelessWidget {
             listener: (context, state) {
               if (state is TimerFinish) {
                 BlocProvider.of<MesocicloBloc>(context).add(SesionEnded());
+                BlocProvider.of<TimerBloc>(context).add(TimerRestart());
               }
             },
             builder: (context, state) {

@@ -6,6 +6,7 @@ import 'package:lacucha_app_v2/constants.dart';
 import 'package:lacucha_app_v2/models/bloque.dart';
 import 'package:lacucha_app_v2/models/ejercicio.dart';
 import 'package:lacucha_app_v2/models/ejercicio_x_bloque.dart';
+import 'package:lacucha_app_v2/models/estado_mesociclo.dart';
 import 'package:lacucha_app_v2/models/mesociclo.dart';
 import 'package:lacucha_app_v2/models/sesion.dart';
 
@@ -120,5 +121,30 @@ class TrainService {
     } on Exception catch (e) {
       throw e;
     }
+  }
+
+  static Future<Mesociclo> putMesociclo(Mesociclo mesociclo, String token) async {
+    var _mesocicloJson = mesociclo.toPutJson();
+    try {
+      final response = await http.put('$apiBaseUrl/mesociclos/${mesociclo.idMesociclo}',
+          headers: {
+            HttpHeaders.contentTypeHeader: "application/json",
+            HttpHeaders.authorizationHeader: "Bearer $token"
+          },
+          body: jsonEncode(_mesocicloJson));
+      if (response.statusCode == 200) {
+        Mesociclo _mesociclo = Mesociclo.fromJson(jsonDecode(response.body));
+        return _mesociclo;
+      } else {
+        return null;
+      }
+    } on Exception catch (e) {
+      throw e;
+    }
+  }
+
+  static Future<Mesociclo> deleteMesociclo(Mesociclo mesociclo, String token) async {
+    mesociclo.estado = EstadoMesociclo.cancelado;
+    return await putMesociclo(mesociclo, token);
   }
 }

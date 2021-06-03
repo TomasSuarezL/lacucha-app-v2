@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 const env = "dev";
 
-// const apiBaseUrlDev = "http://192.168.0.41:5000/api"; // CASA
+const apiBaseUrlDev = "http://192.168.0.242:5000/api"; // CASA
 // const apiBaseUrlDev = "http://192.168.200.10:5000/api"; // CASA FLOR
-const apiBaseUrlDev = "http://192.168.1.102:5000/api"; // CASA CAR
+// const apiBaseUrlDev = "http://192.168.0.159:5000/api"; // CASA CAR
 
 const apiBaseUrlProd = "https://lacucha-app-back.herokuapp.com/api";
 

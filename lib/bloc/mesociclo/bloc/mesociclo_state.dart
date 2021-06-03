@@ -48,6 +48,13 @@ class MesocicloSesionFinal extends MesocicloState {
   List<Object> get props => [mesociclo.idMesociclo];
 }
 
+class MesocicloFinal extends MesocicloState {
+  const MesocicloFinal(Mesociclo mesociclo) : super(mesociclo);
+
+  @override
+  List<Object> get props => [mesociclo.idMesociclo];
+}
+
 class MesocicloEmpty extends MesocicloState {}
 
 class MesocicloFetching extends MesocicloState {}

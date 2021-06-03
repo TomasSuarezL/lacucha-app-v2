@@ -38,25 +38,30 @@ class _LoginPageState extends State<LoginPage> {
   Widget _loginHeader(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        gradient: RadialGradient(
-            center: Alignment.center,
-            radius: 0.85,
-            focal: Alignment.center,
-            focalRadius: 0.3,
-            colors: [Colors.white, Theme.of(context).primaryColorDark]),
+        // gradient: RadialGradient(
+        //   center: Alignment.center,
+        //   radius: 0.35,
+        //   focal: Alignment.center,
+        //   focalRadius: 1,
+        //   colors: [
+        //     secondaryColor.withOpacity(0.4),
+        //     Colors.white,
+        //   ],
+        // ),
+        // color: secondaryColorLight.withOpacity(0.5),
         image: DecorationImage(
-          image: AssetImage("assets/Perro.jpeg"),
+          image: AssetImage("assets/La_Cucha_Fuerza_Blanco_5.png"),
           fit: BoxFit.cover,
-          colorFilter: ColorFilter.mode(secondaryColor.withOpacity(0.5), BlendMode.colorBurn),
+          // colorFilter: ColorFilter.mode(secondaryColor.withOpacity(0.2), BlendMode.colorBurn),
         ),
       ),
-      height: 250,
+      height: 340,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text("La", style: Theme.of(context).textTheme.headline4.apply(color: Colors.white, fontWeightDelta: 300)),
-          SizedBox(width: 16),
-          Text("Cucha", style: Theme.of(context).textTheme.headline4.apply(color: Colors.white, fontWeightDelta: 300)),
+          // Text("La", style: Theme.of(context).textTheme.headline4.apply(color: Colors.white, fontWeightDelta: 300)),
+          // SizedBox(width: 16),
+          // Text("Cucha", style: Theme.of(context).textTheme.headline4.apply(color: Colors.white, fontWeightDelta: 300)),
         ],
       ),
     );
@@ -67,7 +72,16 @@ class _LoginPageState extends State<LoginPage> {
       child: TextFormField(
         keyboardType: TextInputType.text,
         initialValue: _username,
-        decoration: InputDecoration(prefixIcon: Icon(Icons.person), filled: true, labelText: "Username"),
+        style: Theme.of(context).textTheme.subtitle1.apply(color: Colors.white),
+        decoration: InputDecoration(
+          prefixIcon: Icon(Icons.person, color: Colors.white),
+          filled: true,
+          fillColor: secondaryColorDark.withOpacity(0.7),
+          labelText: "Username",
+          labelStyle: Theme.of(context).textTheme.subtitle1.apply(color: Colors.white),
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
+        ),
         onChanged: (value) => setState(() => _username = value),
         validator: (value) {
           if (value.isEmpty) {
@@ -84,7 +98,16 @@ class _LoginPageState extends State<LoginPage> {
       child: TextFormField(
         keyboardType: TextInputType.text,
         initialValue: _password,
-        decoration: InputDecoration(prefixIcon: Icon(Icons.lock), filled: true, labelText: "Password"),
+        style: Theme.of(context).textTheme.subtitle1.apply(color: Colors.white),
+        decoration: InputDecoration(
+          prefixIcon: Icon(Icons.lock, color: Colors.white),
+          filled: true,
+          fillColor: secondaryColorDark.withOpacity(0.7),
+          labelText: "Password",
+          labelStyle: Theme.of(context).textTheme.subtitle1.apply(color: Colors.white),
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
+        ),
         obscureText: true,
         onChanged: (value) => setState(() => _password = value),
         validator: (value) {
@@ -103,11 +126,12 @@ class _LoginPageState extends State<LoginPage> {
       children: [
         RaisedButton(
             child: Text(
-              "Ingresar con Email",
+              "Ingresar",
               style: Theme.of(context).textTheme.button.apply(color: Colors.white, fontWeightDelta: 0),
             ),
-            color: secondaryColorLight,
-            padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+            color: secondaryColorDark.withOpacity(0.7),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.0)),
+            padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 48.0),
             onPressed: () async {
               setState(() {
                 _loading = true;
@@ -172,85 +196,89 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void _errorMessage(BuildContext context) {
+  Widget _errorMessage(BuildContext context) {
     UsuarioState state = _usuarioBloc.state;
     if (state is UsuarioUnauthenticated) {
-      _scaffoldKey.currentState.showSnackBar(SnackBar(
-          backgroundColor: Colors.red[200],
-          content: Text(
-            "${state.mensaje}",
-            style: Theme.of(context).textTheme.subtitle1.apply(color: Colors.white70),
-          )));
-    } else if (state is UsuarioFailure) {
-      _scaffoldKey.currentState.showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.red[200],
-          content: Text(
-            "Error de conexión con el servidor.",
-            style: Theme.of(context).textTheme.subtitle1.apply(color: Colors.white70),
-          ),
+      return Container(
+        padding: EdgeInsets.all(8.0),
+        margin: EdgeInsets.all(8.0),
+        color: Colors.red[200],
+        child: Text(
+          "${state.mensaje}",
+          style: Theme.of(context).textTheme.subtitle1.apply(color: Colors.white70),
         ),
       );
+    } else if (state is UsuarioFailure) {
+      return Container(
+        padding: EdgeInsets.all(8.0),
+        margin: EdgeInsets.all(8.0),
+        color: Colors.red[200],
+        child: Text(
+          "Error de conexión con el servidor.",
+          style: Theme.of(context).textTheme.subtitle1.apply(color: Colors.white70),
+        ),
+      );
+    } else {
+      return Container();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!_loading) _errorMessage(context);
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
         title: Text("Log In"),
       ),
-      backgroundColor: Theme.of(context).primaryColor,
-      body: Stack(
-        alignment: Alignment.topCenter,
-        children: [
-          _loginHeader(context),
-          _loading
-              ? Center(child: CircularProgressIndicator())
-              : Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    borderRadius: BorderRadius.all(Radius.circular(8)),
-                    boxShadow: [
-                      BoxShadow(offset: Offset(0, 0), blurRadius: 0.0, color: Theme.of(context).primaryColorLight),
-                    ],
-                  ),
-                  margin: EdgeInsets.only(top: 166.0, left: 16.0, right: 16.0),
-                  padding: EdgeInsets.all(24.0),
-                  child: Form(
-                    key: _formKey,
-                    child: ListView(
-                      shrinkWrap: true,
-                      children: [
-                        Text(
-                          "Ingresar",
-                          style: Theme.of(context).textTheme.headline6,
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(
-                          height: 32.0,
-                        ),
-                        _usernameInput(context),
-                        SizedBox(
-                          height: 32.0,
-                        ),
-                        _passwordInput(context),
-                        SizedBox(
-                          height: 32.0,
-                        ),
-                        _loginButton(context),
-                        Divider(
-                          height: 48.0,
-                          thickness: 1,
-                        ),
-                        _loginWithGoogleButton(context),
-                      ],
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              secondaryColorDark,
+              secondaryColorLight,
+            ],
+          ),
+        ),
+        child: Stack(
+          alignment: Alignment.topCenter,
+          children: [
+            _loginHeader(context),
+            _errorMessage(context),
+            _loading
+                ? Center(child: CircularProgressIndicator())
+                : Container(
+                    margin: EdgeInsets.only(top: 236),
+                    padding: EdgeInsets.all(24.0),
+                    child: Form(
+                      key: _formKey,
+                      child: ListView(
+                        shrinkWrap: false,
+                        children: [
+                          SizedBox(
+                            height: 24.0,
+                          ),
+                          _usernameInput(context),
+                          SizedBox(
+                            height: 32.0,
+                          ),
+                          _passwordInput(context),
+                          SizedBox(
+                            height: 48.0,
+                          ),
+                          _loginButton(context),
+                          Divider(
+                            height: 64.0,
+                            thickness: 1,
+                          ),
+                          _loginWithGoogleButton(context),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-        ],
+          ],
+        ),
       ),
     );
   }

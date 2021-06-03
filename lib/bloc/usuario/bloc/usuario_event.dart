@@ -9,13 +9,19 @@ abstract class UsuarioEvent extends Equatable {
 class UsuarioLogIn extends UsuarioEvent {
   UsuarioLogIn({this.uuid});
 
-  String uuid;
+  final String uuid;
+}
+
+class UsuarioUpdated extends UsuarioEvent {
+  UsuarioUpdated({this.usuario});
+
+  final Usuario usuario;
 }
 
 class UsuarioFirebaseError extends UsuarioEvent {
   UsuarioFirebaseError({this.mensaje});
 
-  String mensaje;
+  final String mensaje;
 }
 
 class UsuarioLogOut extends UsuarioEvent {}

@@ -3,8 +3,11 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
+import 'package:lacucha_app_v2/models/bloque.dart';
 import 'package:lacucha_app_v2/models/mesociclo.dart';
 import 'package:lacucha_app_v2/models/sesion.dart';
+import 'package:lacucha_app_v2/services/helpers.dart';
 import 'package:lacucha_app_v2/services/train_service.dart';
 import 'package:lacucha_app_v2/services/usuario_service.dart';
 import 'package:meta/meta.dart';
@@ -26,33 +29,37 @@ class MesocicloBloc extends Bloc<MesocicloEvent, MesocicloState> {
     } else if (event is SesionStarted) {
       yield* _mapSesionStartedToState(event);
     } else if (event is SesionEnded) {
-      yield* _mapSesionFinishedToState(event);
+      yield* _mapSesionEndedToState(event);
     } else if (event is SesionNext) {
       yield* _mapSesionNextToState(event);
+    } else if (event is SesionUpdated) {
+      yield* _mapSesionUpdatedToState(event);
     }
   }
 
   Stream<MesocicloState> _mapMesocicloFetchedToState(MesocicloFetched fetch) async* {
     try {
-      if (state is MesocicloInitial) {
-        yield MesocicloFetching();
-        String _token = await FirebaseAuth.instance.currentUser.getIdToken();
-        final mesociclo = await UsuarioService.getMesocicloActivo(fetch.idUsuario, _token);
-        if (mesociclo.idMesociclo == null) {
-          yield MesocicloEmpty();
-          return;
-        }
-        Sesion sesionHoy = mesociclo.sesiones
-            .firstWhere((s) => s.fechaEmpezado.difference(DateTime.now()).inDays == 0, orElse: () => null);
-        if (sesionHoy == null) {
-          yield MesocicloSesionProxima(mesociclo, sesionHoy);
-        } else if (sesionHoy?.fechaFinalizado != null) {
-          yield MesocicloSesionFinal(mesociclo, sesionHoy);
-        } else {
-          yield MesocicloSuccess(mesociclo, sesionHoy);
-        }
+      yield MesocicloFetching();
+      String _token = await FirebaseAuth.instance.currentUser.getIdToken();
+      final mesociclo = await UsuarioService.getMesocicloActivo(fetch.idUsuario, _token);
+      if (mesociclo.idMesociclo == null) {
+        yield MesocicloEmpty();
         return;
       }
+      Sesion sesionHoy =
+          mesociclo.sesiones.firstWhere((s) => isSameDay(s.fechaEmpezado, DateTime.now()), orElse: () => null);
+      if (sesionHoy == null) {
+        if (mesociclo.proximaSesion == null) {
+          yield MesocicloFinal(mesociclo);
+        } else {
+          yield MesocicloSesionProxima(mesociclo, sesionHoy);
+        }
+      } else if (sesionHoy?.fechaFinalizado != null) {
+        yield MesocicloSesionFinal(mesociclo, sesionHoy);
+      } else {
+        yield MesocicloSuccess(mesociclo, sesionHoy);
+      }
+      return;
     } catch (e) {
       yield MesocicloFailure();
     }
@@ -91,14 +98,22 @@ class MesocicloBloc extends Bloc<MesocicloEvent, MesocicloState> {
     }
   }
 
-  Stream<MesocicloState> _mapSesionFinishedToState(SesionEnded finish) async* {
+  Stream<MesocicloState> _mapSesionEndedToState(SesionEnded finish) async* {
     try {
+      Mesociclo currentMesociclo = state.mesociclo;
+      Sesion currentSesion = state.sesionActual;
+      yield MesocicloFetching();
       if (state is MesocicloSesionStart) {
-        state.sesionActual.fechaFinalizado = DateTime.now();
+        currentSesion.fechaFinalizado = DateTime.now();
         String _token = await FirebaseAuth.instance.currentUser.getIdToken();
-        var result = await TrainService.putSesion(state.sesionActual, _token);
+        var result = await TrainService.putSesion(currentSesion, _token);
         if (result) {
-          yield MesocicloSesionFinal(state.mesociclo, state.sesionActual);
+          if (currentMesociclo.proximaSesion == null) {
+            // No hay proxima sesion en el mesociclo -> mesociclo finalizado
+            yield MesocicloFinal(currentMesociclo);
+          } else {
+            yield MesocicloSesionFinal(currentMesociclo, currentSesion);
+          }
         } else {
           yield MesocicloFailure();
         }
@@ -118,6 +133,19 @@ class MesocicloBloc extends Bloc<MesocicloEvent, MesocicloState> {
         _proximasSesiones.sort((a, b) => a.fechaEmpezado.compareTo(b.fechaEmpezado));
         final _proximaSesion = _proximasSesiones[0];
         yield MesocicloSuccess(state.mesociclo, _proximaSesion);
+        return;
+      }
+    } catch (e) {
+      yield MesocicloFailure();
+    }
+  }
+
+  Stream<MesocicloState> _mapSesionUpdatedToState(SesionUpdated update) async* {
+    try {
+      if (state is MesocicloSuccess) {
+        yield MesocicloFetching();
+        //state.sesionActual.bloques[update.bloque.numBloque] = update.bloque;
+        yield MesocicloSuccess(state.mesociclo, state.sesionActual);
         return;
       }
     } catch (e) {

@@ -28,7 +28,7 @@ class _NuevoResumenState extends State<NuevoResumen> {
   }
 
   Future _calcSesiones() async {
-    await widget.mesociclo.calc_sesiones(widget.patrones);
+    await widget.mesociclo.calcSesiones(widget.patrones);
     setState(() {
       _nuevoMesociclo = widget.mesociclo;
     });

@@ -49,7 +49,11 @@ class Mesociclo {
       this.sesionesPorSemana,
       this.sesiones});
 
-  calc_sesiones(PatronesCantidades patrones) async {
+  Sesion get proximaSesion => this.sesiones.firstWhere(
+      (s) => s.fechaFinalizado == null && s.fechaEmpezado.difference(DateTime.now()).inDays != 0,
+      orElse: () => null);
+
+  calcSesiones(PatronesCantidades patrones) async {
     this.sesiones = [];
 
     // Aca pasa la magia. Calculo en base a los datos ingresados del nuevo mesociclo, como deberian ser las proximas sesiones
@@ -105,6 +109,20 @@ class Mesociclo {
   Map<String, dynamic> toJson() => _$MesocicloToJson(this);
 
   Map<String, dynamic> toPostJson() => <String, dynamic>{
+        'usuario': this.usuario.toIdJson(),
+        'nivel': this.nivel.toIdJson(),
+        'objetivo': this.objetivo.toIdJson(),
+        'organizacion': this.organizacion.toIdJson(),
+        'principalTrenSuperior': this.principalTrenSuperior.toIdJson(),
+        'principalTrenInferior': this.principalTrenInferior.toIdJson(),
+        'semanasPorMesociclo': this.semanasPorMesociclo,
+        'sesionesPorSemana': this.sesionesPorSemana,
+        'sesiones': this.sesiones.map((e) => e.toPostJson()).toList()
+      };
+
+  Map<String, dynamic> toPutJson() => <String, dynamic>{
+        'idMesociclo': this.idMesociclo,
+        'estado': this.estado.toIdJson(),
         'usuario': this.usuario.toIdJson(),
         'nivel': this.nivel.toIdJson(),
         'objetivo': this.objetivo.toIdJson(),

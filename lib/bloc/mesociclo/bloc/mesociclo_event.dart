@@ -20,9 +20,16 @@ class MesocicloCreated extends MesocicloEvent {
   const MesocicloCreated({@required this.mesociclo});
 }
 
+
 class MesocicloEnded extends MesocicloEvent {
   final Mesociclo mesociclo;
   const MesocicloEnded({this.mesociclo});
+}
+
+class SesionUpdated extends MesocicloEvent {
+  final Bloque bloque;
+
+  const SesionUpdated({@required this.bloque});
 }
 
 class SesionStarted extends MesocicloEvent {

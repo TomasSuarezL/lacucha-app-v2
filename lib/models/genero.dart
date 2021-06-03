@@ -1,9 +1,10 @@
+import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'genero.g.dart';
 
 @JsonSerializable()
-class Genero {
+class Genero extends Equatable {
   final int idGenero;
   final String descripcion;
 
@@ -18,4 +19,7 @@ class Genero {
   static const Genero masculino = Genero(idGenero: 1, descripcion: "Masculino");
   static const Genero femenino = Genero(idGenero: 2, descripcion: "Femenino");
   static const Genero otro = Genero(idGenero: 3, descripcion: "Otro");
+
+  @override
+  List<Object> get props => [idGenero];
 }

@@ -20,8 +20,8 @@ class UsuarioBloc extends Bloc<UsuarioEvent, UsuarioState> {
     final currentState = state;
     if (event is UsuarioLogIn) {
       try {
+        yield UsuarioFetching();
         if (!(currentState is UsuarioAuthenticated)) {
-          yield UsuarioFetching();
           String _token = await FirebaseAuth.instance.currentUser.getIdToken();
           final Usuario usuario = await UsuarioService.getUsuario(event.uuid, _token);
           if (usuario.idUsuario != null) {
@@ -30,10 +30,15 @@ class UsuarioBloc extends Bloc<UsuarioEvent, UsuarioState> {
             yield UsuarioUnregistered();
           }
           return;
+        } else {
+          yield UsuarioAuthenticated(usuario: (currentState as UsuarioAuthenticated).usuario);
         }
       } catch (e) {
+        await FirebaseAuth.instance.signOut();
         yield UsuarioFailure();
       }
+    } else if (event is UsuarioUpdated) {
+      yield UsuarioAuthenticated(usuario: event.usuario);
     } else if (event is UsuarioLogOut) {
       await FirebaseAuth.instance.signOut();
       yield UsuarioInitial();

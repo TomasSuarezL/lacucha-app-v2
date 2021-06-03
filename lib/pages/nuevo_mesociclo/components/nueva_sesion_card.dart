@@ -4,7 +4,7 @@ import 'package:lacucha_app_v2/constants.dart';
 import 'package:lacucha_app_v2/models/bloque.dart';
 import 'package:lacucha_app_v2/models/ejercicio_x_bloque.dart';
 import 'package:lacucha_app_v2/models/sesion.dart';
-import 'package:lacucha_app_v2/pages/nuevo_mesociclo/nuevo_editar_ejercicio.dart';
+import 'package:lacucha_app_v2/pages/train/editar_ejercicio.dart';
 
 class NuevaSesionCard extends StatelessWidget {
   NuevaSesionCard({Key key, this.sesion, this.index, this.updateEjercicio}) : super(key: key);

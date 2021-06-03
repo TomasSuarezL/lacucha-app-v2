@@ -10,7 +10,7 @@ import 'package:lacucha_app_v2/pages/history/history.dart';
 import 'package:lacucha_app_v2/pages/home/home.dart';
 import 'package:lacucha_app_v2/pages/login/login.dart';
 import 'package:lacucha_app_v2/pages/login/register.dart';
-import 'package:lacucha_app_v2/pages/settings.dart';
+import 'package:lacucha_app_v2/pages/settings/settings.dart';
 import 'package:lacucha_app_v2/pages/train/train.dart';
 import 'package:lacucha_app_v2/services/ticker.dart';
 
